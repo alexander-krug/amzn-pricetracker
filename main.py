@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 URL = "https://www.amazon.de/-/de/GA03464-GB/dp/B0BDJ3ND5X/"
 HEADERS = {"UserAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:105.0) Gecko/20100101 Firefox/105.0"} 
 
+
+
 def trackPrices():
     price = float(getPrice()) #Preis einlesen
     if price > PRICE_VALUE: #wenn aktueller Preis größer als Zielpreis
@@ -16,15 +18,20 @@ def trackPrices():
 
 def getPrice():
     page = requests.get(URL, headers=HEADERS)
-    soup = BeautifulSoup(page.content, 'html.parser')
+    #soup = BeautifulSoup(page.content, 'html.parser')
+    soup = BeautifulSoup(page.content, "lxml")
     title = soup.find(id='productTitle').get_text().strip()
     #price = soup.find(id='priceblock_ourprice').get_text().strip()[1:4] #geht nicht für Amazon.de
     #price = soup.find(id='a-price-hole').get_text()
-    price = soup.find('span', id='a-price-hole').text.strip()
-    print(title)
-    print(price)
-    #Converting the string to integer
-    price = int(float(price))
+    #price = soup.find('span', id='a-price-hole').text.strip()
+    while true:
+        price = soup.find(id="priceblock_dealprice").get_text()
+        #Converting the string to integer
+        price = int(float(price))
+        print(title)
+        print(price)
+        if price > 0:
+            break
     return price
     
 if __name__ == "__main__":
